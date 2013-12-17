@@ -205,6 +205,7 @@ typedef struct FLAC__StreamDecoderPrivate {
 #if FLAC__HAS_OGG
 	FLAC__bool got_a_frame; /* hack needed in Ogg FLAC seek routine to check when process_single() actually writes a frame */
 #endif
+        FLAC__int32 *newbuffer[FLAC__MAX_CHANNELS];
 } FLAC__StreamDecoderPrivate;
 
 /***********************************************************************
@@ -2935,13 +2936,12 @@ FLAC__StreamDecoderWriteStatus write_audio_frame_to_client_(FLAC__StreamDecoder 
 			/* shift out the samples before target_sample */
 			if(delta > 0) {
 				unsigned channel;
-				const FLAC__int32 *newbuffer[FLAC__MAX_CHANNELS];
 				for(channel = 0; channel < frame->header.channels; channel++)
-					newbuffer[channel] = buffer[channel] + delta;
+					decoder->private_->newbuffer[channel] = (FLAC__int32 *)buffer[channel] + delta;
 				decoder->private_->last_frame.header.blocksize -= delta;
 				decoder->private_->last_frame.header.number.sample_number += (FLAC__uint64)delta;
 				/* write the relevant samples */
-				return decoder->private_->write_callback(decoder, &decoder->private_->last_frame, newbuffer, decoder->private_->client_data);
+				return decoder->private_->write_callback(decoder, &decoder->private_->last_frame, (const FLAC__int32 * const *)decoder->private_->newbuffer, decoder->private_->client_data);
 			}
 			else {
 				/* write the relevant samples */
