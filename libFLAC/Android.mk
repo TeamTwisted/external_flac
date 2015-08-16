@@ -25,7 +25,7 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_CFLAGS += -DHAVE_CONFIG_H -DFLAC__NO_MD5 -DFLAC__INTEGER_ONLY_LIBRARY
 LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_COMMON_IMPLEMENTATION -fPIC
-LOCAL_CFLAGS += -O3 -funroll-loops -finline-functions
+LOCAL_CFLAGS += -Ofast -funroll-loops -finline-functions
 
 LOCAL_ARM_MODE := arm
 
